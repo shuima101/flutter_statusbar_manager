@@ -21,7 +21,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   double _statusBarHeight = 0.0;
   bool _statusBarColorAnimated = false;
-  Color _statusBarColor = Colors.black;
+  Color? _statusBarColor = Colors.black;
   double _statusBarOpacity = 1.0;
   bool _statusBarHidden = false;
   StatusBarAnimation _statusBarAnimation = StatusBarAnimation.NONE;
@@ -61,7 +61,7 @@ class _MyAppState extends State<MyApp> {
     return Text(text, style: textStyle);
   }
 
-  void colorBarChanged(Color val) {
+  void colorBarChanged(Color? val) {
     this.setState(() {
       _statusBarColor = val;
     });
@@ -69,25 +69,26 @@ class _MyAppState extends State<MyApp> {
   }
 
   void updateStatusBar() {
-    FlutterStatusbarManager.setColor(
-        _statusBarColor.withOpacity(_statusBarOpacity),
-        animated: _statusBarColorAnimated);
+    Color color = _statusBarColor != null ? _statusBarColor!.withOpacity(_statusBarOpacity) : Colors.transparent;
+    FlutterStatusbarManager.setColor(color, animated: _statusBarColorAnimated);
   }
 
-  void statusBarAnimationChanged(StatusBarAnimation val) {
+  void statusBarAnimationChanged(StatusBarAnimation? val) {
     this.setState(() {
-      _statusBarAnimation = val;
+      _statusBarAnimation = val ?? StatusBarAnimation.NONE;
     });
   }
 
-  void statusBarStyleChanged(StatusBarStyle val) {
+  void statusBarStyleChanged(StatusBarStyle? val) {
+    var style = val == null ? StatusBarStyle.DEFAULT : val;
     this.setState(() {
-      _statusBarStyle = val;
+      _statusBarStyle = style;
     });
-    FlutterStatusbarManager.setStyle(val);
+    FlutterStatusbarManager.setStyle(style);
   }
 
-  void colorNavBarChanged(Color val) {
+  void colorNavBarChanged(Color? val) {
+    if (val == null) return;
     this.setState(() {
       _navBarColor = val;
     });
@@ -99,7 +100,8 @@ class _MyAppState extends State<MyApp> {
         animated: _navBarColorAnimated);
   }
 
-  void navigationBarStyleChanged(NavigationBarStyle val) {
+  void navigationBarStyleChanged(NavigationBarStyle? val) {
+    if (val == null) return;
     this.setState(() {
       _navBarStyle = val;
     });
